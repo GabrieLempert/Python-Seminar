@@ -1,26 +1,46 @@
 import tkinter as tk
 
 
-def create_header_pack(header, text, size):
+class ComputerLayer:
+    def __init__(self, frame, number):
+        self.frame = frame
+        self.number = number
+
+    def computer_header_layer(self, size):
+        tk.Label(master=self.frame, text=f"Computer {self.number}", justify="center", font=f"BOLD {size}").pack()
+
+    def playing_grid(self):
+        top_grid = tk.Frame(
+            master=self.frame,
+            relief=tk.RIDGE,
+            borderwidth=2
+        )
+        number_label = tk.Label(top_grid, text="The number is: ", relief=tk.RIDGE)
+        b_label = tk.Label(top_grid, text="B", relief=tk.RIDGE, width=10)
+        h_label = tk.Label(top_grid, text="H", relief=tk.RIDGE, width=10)
+        top_grid.pack(fill=tk.BOTH)
+        top_grid.columnconfigure([0, 1, 2], weight=1, minsize=5)
+        number_label.grid(row=0, column=0, sticky="w")
+        b_label.grid(row=0, column=1, sticky="e")
+        h_label.grid(row=0, column=2, sticky="e")
+
+
+def computer_window(window):
     """
-    :param header: frame where the label will show
-    :param text: the text you want to show
-    :param size: the size of the label
-
-    just easier function to create a header for creating headers for functions
-
+    2 computers frame each will show there stats in the game
     """
-    tk.Label(master=header, text=text, justify="center", font=f"BOLD {size}").pack()
 
+    # Computer 1
+    computer_1 = ComputerLayer(tk.Frame(window, width=200, borderwidth="2", relief=tk.RIDGE, height=200), 1)
+    computer_1.frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
+    computer_2 = ComputerLayer(tk.Frame(window, width=200, borderwidth="2", relief=tk.RIDGE, height=200), 2)
+    computer_2.frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
 
-def computer_header_layer(computer, number):
-    computer_1_top = tk.Frame(master=computer, width=100, bg="green")
-    computer_1_top.pack(side=tk.TOP)
-    create_header_pack(computer_1_top, f"Computer {number}", 25)
-
-
-def playing_grid(frame):
-    pass
+    computer_1.computer_header_layer(25)
+    computer_1.playing_grid()
+    # Computer 2
+    computer_2.computer_header_layer(25)
+    computer_2.playing_grid()
 
 
 def info_grid(frame, text):
@@ -30,28 +50,6 @@ def info_grid(frame, text):
     btn = tk.Button(master=frame, text="Start")
     label_computer.grid(row=0, column=0)
     btn.grid(row=0, column=1, sticky="nwse")
-
-
-def computer_window(window):
-    """
-    2 computers frame each will show there stats in the game
-    """
-    # Computer 1
-    computer_1_side = tk.Frame(
-        master=window,
-        relief=tk.RIDGE,
-        borderwidth=5)
-    computer_1_side.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
-    computer_header_layer(computer_1_side, 1)
-
-    # Computer 2
-    computer_2_side = tk.Frame(
-        master=window,
-        relief=tk.RIDGE,
-        borderwidth=5
-    )
-    computer_2_side.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
-    computer_header_layer(computer_2_side, 2)
 
 
 def main_window(window):
@@ -73,7 +71,8 @@ def main_window(window):
         borderwidth=5
     )
     bottom.pack(fill=tk.BOTH)
-    info_grid(bottom, f"Game Number: {1}\nComputer {1} Won!")
+    who_won = ""
+    info_grid(bottom, f"Game Number: {1}\n" + who_won)
 
 
 def main():
