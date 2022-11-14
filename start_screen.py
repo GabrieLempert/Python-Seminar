@@ -2,8 +2,11 @@ import tkinter as tk
 
 
 class StartScreen:
-    def __init__(self, window):
-        self.window = window
+    window = tk.Tk()
+    window.geometry("400x200")
+    window.title("Start Game Screen")
+
+    def __init__(self):
         self.lbl = tk.Label(master=self.window, text="Start Game")
         self.start_btn = tk.Button(master=self.window, text="Press Here")
 
@@ -14,9 +17,3 @@ class StartScreen:
 
     def destroy_window(self):
         self.window.destroy()
-
-
-
-
-def start():
-    return StartScreen(tk.Tk())
