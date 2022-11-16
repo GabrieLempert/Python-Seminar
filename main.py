@@ -11,8 +11,8 @@ game_backend.create_list()
 game_backend.choose_random()
 start_number = game_backend.start_number
 final_bulls = game_backend.number_of_digits
-
-
+print("first")
+print("first")
 def change_window():
     first_window.destroy_window()
     display.display(number_1=start_number)
