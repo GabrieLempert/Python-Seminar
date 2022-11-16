@@ -37,6 +37,6 @@ def game_loop():
         game_backend.reduce_table()
 
 
-display.main_window.bottom.info_layer.btn.config(command=game_loop)
+display.main_window.bottom.info_layer.btn.config(command=game_loop)  # Start button on Display Game
 first_window.start_btn.config(command=change_window)
-first_window.create_start()
+first_window.create_start()  # First window to showcase game

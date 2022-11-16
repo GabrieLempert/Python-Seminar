@@ -17,7 +17,6 @@ class ComputerLayer:
         tk.Label(master=self.frame, text=f"Computer {self.number}", justify="center", font=f"BOLD {size}").pack()
 
     def playing_grid(self):
-
         self.number_label = tk.Label(self.top_grid, text=f"The number is: {self.guess_number} ", relief=tk.RIDGE)
         b_label = tk.Label(self.top_grid, text="B", relief=tk.RIDGE, width=10)
         h_label = tk.Label(self.top_grid, text="H", relief=tk.RIDGE, width=10)
@@ -56,7 +55,6 @@ class TopLayer:
             master=self.computer_1_layer.frame,
             relief=tk.RIDGE,
             borderwidth=2,
-
         )
         label_guess = tk.Label(master=new_frame, text=f"Guess-{number_guess}:Number-{guessed_number}", height=4)
         label_bh = tk.Label(master=new_frame, text=f"{number_bulls}", width=5)
@@ -100,8 +98,6 @@ class MainWindow:
         self.bottom.info_layer.info_grid()
 
 
-
-
 class DisplayGame:
     window = tk.Tk()
     window.title("Game Screen")
@@ -123,4 +119,3 @@ class DisplayGame:
         self.main_window.top_window(number_1=number_1)
         self.main_window.bottom_window()
         self.window.mainloop()
-
