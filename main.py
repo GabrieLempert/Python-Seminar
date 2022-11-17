@@ -31,6 +31,8 @@ def game_loop():
             number_guess=counter,
             guessed_number=game_backend.guess
         )
+        if game_backend.number_bulls == game_backend.number_of_digits:
+            break
         game_backend.temp_number = game_backend.guess
         game_backend.nh = game_backend.number_hits
         game_backend.nb = game_backend.number_bulls
