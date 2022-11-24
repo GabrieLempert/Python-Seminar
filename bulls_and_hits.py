@@ -61,10 +61,12 @@ class BullsHitsDB:
         self.player = f"Computer {player}"
         self.games = dict()
 
-    def add_game(self, game_number, number, table_size):
-        self.games[f"Game {game_number}"] = {
+    def add_game(self, number, table_size):
+        self.games[f"Game {self.number_of_games}"] = {
             "number": number,
             "guess": [],
             "table size": [table_size]
         }
         self.number_of_games += 1
+
+
