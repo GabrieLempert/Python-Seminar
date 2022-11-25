@@ -62,7 +62,7 @@ class BullsHitsDB:
         self.games = dict()
 
     def add_game(self, number, table_size):
-        self.games[f"Game {self.number_of_games}"] = {
+        self.games[f"Game {self.number_of_games+1}"] = {
             "number": number,
             "guess": [],
             "table size": [table_size]

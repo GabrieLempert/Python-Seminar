@@ -1,5 +1,3 @@
-from functools import reduce
-
 import main_game
 import start_screen
 import bulls_and_hits as bh
@@ -10,6 +8,30 @@ import time
 def change_window():
     first_window.destroy_window()
     display.display()
+
+
+# def game_logs(current_game):
+    if len(thread.enumerate()) <= 2:
+        player_1_guess = len(data_base_1.games[f"Game {current_game}"]["guess"])
+        player_2_guess = len(data_base_2.games[f"Game {current_game}"]["guess"])
+        number_of_games = f"We played #{data_base_1.number_of_games} games"
+        if player_1_guess == player_2_guess:
+            display.main_window.bottom.info_layer.label_computer.configure(text="DRAW none win\n" + number_of_games)
+        elif player_2_guess < player_1_guess:
+            display. \
+                main_window. \
+                bottom.info_layer. \
+                label_computer. \
+                configure(text="Computer 2 won this game\n" + number_of_games)
+        elif player_2_guess > player_1_guess:
+            display. \
+                main_window. \
+                bottom. \
+                info_layer. \
+                label_computer. \
+                configure(text="Computer 1 won this game\n" + number_of_games)
+    else:
+        pass
 
 
 def game_loop(number, data_base):
@@ -32,7 +54,7 @@ def game_loop(number, data_base):
         lock.acquire()
         game_backend.temp_number = game_backend.start_number
         game_backend.create_guess()
-        data_base.games.get(f"Game {data_base.number_of_games - 1}")["guess"].append(game_backend.guess)
+        data_base.games.get(f"Game {data_base.number_of_games}")["guess"].append(game_backend.guess)
         game_backend.find_bulls_hits()
         display.main_window.top.add_info(
             layer=number,
@@ -48,44 +70,30 @@ def game_loop(number, data_base):
         game_backend.nh = game_backend.number_hits
         game_backend.nb = game_backend.number_bulls
         game_backend.reduce_table()
-        data_base.games.get(f"Game {data_base.number_of_games - 1}")["table size"].append(
+        data_base.games.get(f"Game {data_base.number_of_games}")["table size"].append(
             len(game_backend.number_list))
         lock.release()
-
-
-"""""""""
-this function is to destroy the windows after the game is finished 
-display.main_window.top.computer_1_layer.frame.winfo_children()[2].destroy()
-display.main_window.top.computer_2_layer.frame.winfo_children()[2].destroy()
-
-"""
+    game_logs(data_base.number_of_games)
 
 
 def restart_windows(array):
-    for i, frame in filter(lambda x: x[0] >= 2, enumerate(array)):
-        frame.destroy()
+    [frame.destroy() for i, frame in filter(lambda x: x[0] >= 2, enumerate(array))]
 
 
 def start_game_loops():
     if data_base_1.number_of_games >= 1:
         restart_windows(display.main_window.top.computer_1_layer.frame.winfo_children())
         restart_windows(display.main_window.top.computer_2_layer.frame.winfo_children())
-        data_base_1.number_of_games += 1
-        data_base_2.number_of_games += 1
-        thread.Thread(target=game_loop, args=[1, data_base_1]).start()
-        thread.Thread(target=game_loop, args=[2, data_base_2]).start()
-    else:
-        data_base_1.number_of_games += 1
-        data_base_2.number_of_games += 1
-        t_1.start()
-        t_2.start()
+    t_1 = thread.Thread(target=game_loop, args=[1, data_base_1])
+    t_2 = thread.Thread(target=game_loop, args=[2, data_base_2])
+    t_1.start()
+    t_2.start()
 
 
+how_many_wins = dict()
 first_window = start_screen.StartScreen()
 data_base_1 = bh.BullsHitsDB(player=1)
 data_base_2 = bh.BullsHitsDB(player=2)
-t_1 = thread.Thread(target=game_loop, args=[1, data_base_1])
-t_2 = thread.Thread(target=game_loop, args=[2, data_base_2])
 display = main_game.DisplayGame()
 display.main_window.bottom.info_layer.btn.config(command=start_game_loops)  # Start button on Display Game
 first_window.start_btn.config(command=change_window)

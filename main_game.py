@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import messagebox
 
 
 class ComputerLayer:
@@ -124,14 +123,14 @@ class TopLayer:
     """
 
     def add_info(self, layer, guessed_number, number_guess, number_bulls, number_hits):
-
+        temp_layer = 0
         if layer == 1:
-            temp = self.computer_1_layer.frame
+            temp_layer = self.computer_1_layer.frame
         if layer == 2:
-            temp = self.computer_2_layer.frame
+            temp_layer = self.computer_2_layer.frame
 
         new_frame = tk.Frame(
-            master=temp,
+            master=temp_layer,
             relief=tk.RIDGE,
             borderwidth=2,
         )
@@ -163,7 +162,7 @@ class BottomLayer:
     """
 
     def __init__(self, bottom_frame):
-        self.info_layer = InfoLayer(info_layer=bottom_frame, label=None, text="")
+        self.info_layer = InfoLayer(info_layer=bottom_frame, label=None, text="Start the game by pressing START =>")
         self.bottom_frame = bottom_frame
 
 
