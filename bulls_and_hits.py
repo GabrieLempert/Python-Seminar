@@ -7,7 +7,6 @@ class BH:
         self.number_list = []
         self.start_number = None
         self.guess = 0
-        self.number_of_games = 1
         self.number_hits = 0
         self.number_bulls = 0
 
@@ -55,5 +54,20 @@ class BH:
         self.create_list()
         self.choose_random()
 
+
+class BullsHitsDB:
+    def __init__(self, player):
+        self.number_of_games = 0
+        self.player = f"Computer {player}"
+        self.number_of_wins = 0
+        self.games = dict()
+
+    def add_game(self, number, table_size):
+        self.games[f"Game {self.number_of_games+1}"] = {
+            "number": number,
+            "guess": [],
+            "table size": [table_size]
+        }
+        self.number_of_games += 1
 
 
