@@ -10,20 +10,26 @@ def change_window():
     display.display()
 
 
-# def game_logs(current_game):
+def game_logs(current_game):
+    number_of_draws = 0
     if len(thread.enumerate()) <= 2:
+        display.main_window.bottom.info_layer.btn["state"] = "normal"
         player_1_guess = len(data_base_1.games[f"Game {current_game}"]["guess"])
         player_2_guess = len(data_base_2.games[f"Game {current_game}"]["guess"])
         number_of_games = f"We played #{data_base_1.number_of_games} games"
         if player_1_guess == player_2_guess:
+            number_of_draws += 1
             display.main_window.bottom.info_layer.label_computer.configure(text="DRAW none win\n" + number_of_games)
         elif player_2_guess < player_1_guess:
+            data_base_2.number_of_wins += 1
             display. \
                 main_window. \
                 bottom.info_layer. \
                 label_computer. \
                 configure(text="Computer 2 won this game\n" + number_of_games)
+
         elif player_2_guess > player_1_guess:
+            data_base_1.number_of_wins += 1
             display. \
                 main_window. \
                 bottom. \
@@ -73,9 +79,11 @@ def game_loop(number, data_base):
         data_base.games.get(f"Game {data_base.number_of_games}")["table size"].append(
             len(game_backend.number_list))
         lock.release()
+        time.sleep(1.5)
     game_logs(data_base.number_of_games)
 
 
+# Restarts the window for new game
 def restart_windows(array):
     [frame.destroy() for i, frame in filter(lambda x: x[0] >= 2, enumerate(array))]
 
@@ -84,17 +92,19 @@ def start_game_loops():
     if data_base_1.number_of_games >= 1:
         restart_windows(display.main_window.top.computer_1_layer.frame.winfo_children())
         restart_windows(display.main_window.top.computer_2_layer.frame.winfo_children())
-    t_1 = thread.Thread(target=game_loop, args=[1, data_base_1])
-    t_2 = thread.Thread(target=game_loop, args=[2, data_base_2])
-    t_1.start()
-    t_2.start()
+    if len(thread.enumerate()) < 2:
+        t_1 = thread.Thread(target=game_loop, args=[1, data_base_1])
+        t_2 = thread.Thread(target=game_loop, args=[2, data_base_2])
+        t_1.start()
+        t_2.start()
+        display.main_window.bottom.info_layer.btn["state"] = "disabled"
 
 
-how_many_wins = dict()
-first_window = start_screen.StartScreen()
-data_base_1 = bh.BullsHitsDB(player=1)
-data_base_2 = bh.BullsHitsDB(player=2)
-display = main_game.DisplayGame()
-display.main_window.bottom.info_layer.btn.config(command=start_game_loops)  # Start button on Display Game
-first_window.start_btn.config(command=change_window)
-first_window.create_start()  # First window to showcase game
+if __name__ == "__main__":
+    first_window = start_screen.StartScreen()
+    data_base_1 = bh.BullsHitsDB(player=1)
+    data_base_2 = bh.BullsHitsDB(player=2)
+    display = main_game.DisplayGame()
+    display.main_window.bottom.info_layer.btn.config(command=start_game_loops)  # Start button on Display Game
+    first_window.start_btn.config(command=change_window)
+    first_window.create_start()  # First window to showcase game

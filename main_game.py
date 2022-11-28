@@ -267,3 +267,20 @@ class DisplayGame:
         self.main_window.top_window()
         self.main_window.bottom_window()
         self.window.mainloop()
+
+
+class StatsWindow:
+    window = tk.Tk()
+    window.title("Stats")
+
+    def __init__(self):
+        # Average of guess pre game
+        # Number of wins
+        # Number of draws
+        # Number of games
+
+
+
+
+
+

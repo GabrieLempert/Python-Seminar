@@ -59,6 +59,7 @@ class BullsHitsDB:
     def __init__(self, player):
         self.number_of_games = 0
         self.player = f"Computer {player}"
+        self.number_of_wins = 0
         self.games = dict()
 
     def add_game(self, number, table_size):
