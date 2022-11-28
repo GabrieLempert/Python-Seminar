@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 
 
 class ComputerLayer:
@@ -122,7 +123,7 @@ class TopLayer:
     :returns: the function do not return any value
     """
 
-    def add_info(self, layer, guessed_number, number_guess, number_bulls, number_hits):
+    def add_info(self, layer, guessed_number, table_size, number_guess, number_bulls, number_hits):
         temp_layer = 0
         if layer == 1:
             temp_layer = self.computer_1_layer.frame
@@ -134,7 +135,9 @@ class TopLayer:
             relief=tk.RIDGE,
             borderwidth=2,
         )
-        label_guess = tk.Label(master=new_frame, text=f"Guess-{number_guess}:Number-{guessed_number}", height=4)
+        label_guess = tk.Label(master=new_frame,
+                               text=f"Guess-{number_guess}:Number-{guessed_number}\n[Table Size:{table_size}]",
+                               height=4)
         label_bh = tk.Label(master=new_frame, text=f"{number_bulls}", width=5)
         label_bn = tk.Label(master=new_frame, text=f"{number_hits}", justify="center", width=10)
         new_frame.pack(fill=tk.BOTH)
@@ -221,6 +224,18 @@ class MainWindow:
         self.bottom.info_layer.info_grid()
 
 
+def stats_open(data_bases, window):
+    if data_bases[0].number_of_games != 0:
+        window.destroy()
+        stats = StatsWindow()
+        for data_base in data_bases:
+            stats.create_starts(data_base=data_base)
+        stats.window.mainloop()
+    else:
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            window.destroy()
+
+
 class DisplayGame:
     """
     A class use to set up the game display, the windows
@@ -270,17 +285,35 @@ class DisplayGame:
 
 
 class StatsWindow:
-    window = tk.Tk()
-    window.title("Stats")
 
     def __init__(self):
+        self.window = tk.Tk()
+        self.window.title("Stats")
+        self.window.geometry("400x400")
+
         # Average of guess pre game
         # Number of wins
         # Number of draws
         # Number of games
+        pass
 
-
-
-
-
-
+    def create_starts(self, data_base):
+        tk.Label(
+            master=self.window,
+            text=data_base.player,
+            justify="center", font=f"BOLD {25}") \
+            .pack()
+        label_list = ["Average guess", "Wins", "Draws", "Games"]
+        frame = tk.Frame(master=self.window, borderwidth="2", relief=tk.RIDGE)
+        frame.columnconfigure([0, 1, 2, 3], weight=1, minsize=100)
+        frame.rowconfigure([0, 1], weight=1, minsize=40)
+        frame.pack()
+        for j in range(4):
+            label = tk.Label(master=frame, text=label_list[j], justify="center", relief=tk.RIDGE, width=10)
+            label.grid(row=0, column=j)
+        if data_base.number_of_games != 0:
+            tk.Label(master=frame, text=data_base.average_calculator(), justify="center", width=10).grid(row=1,
+                                                                                                         column=0)
+            tk.Label(master=frame, text=data_base.number_of_wins, justify="center", width=10).grid(row=1, column=1)
+            tk.Label(master=frame, text=data_base.number_of_draws, justify="center", width=10).grid(row=1, column=2)
+            tk.Label(master=frame, text=data_base.number_of_games, justify="center", width=10).grid(row=1, column=3)
