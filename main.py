@@ -91,6 +91,7 @@ def restart_windows(array):
     [frame.destroy() for i, frame in filter(lambda x: x[0] >= 2, enumerate(array))]
 
 
+#
 def start_game_loops():
     if data_base_1.number_of_games >= 1:
         restart_windows(display.main_window.top.computer_1_layer.frame.winfo_children())
