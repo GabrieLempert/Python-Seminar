@@ -1,4 +1,5 @@
 import random
+from functools import reduce
 
 
 class BH:
@@ -61,13 +62,16 @@ class BullsHitsDB:
         self.player = f"Computer {player}"
         self.number_of_wins = 0
         self.games = dict()
+        self.number_of_draws = 0
 
     def add_game(self, number, table_size):
-        self.games[f"Game {self.number_of_games+1}"] = {
+        self.games[f"Game {self.number_of_games + 1}"] = {
             "number": number,
             "guess": [],
             "table size": [table_size]
         }
         self.number_of_games += 1
 
-
+    def average_calculator(self):
+        return round(reduce(lambda x, y: x + y, [len(self.games[game]["guess"]) for game in self.games]) / \
+               self.number_of_games,2)

@@ -7,18 +7,20 @@ import time
 
 def change_window():
     first_window.destroy_window()
+    display.window.protocol("WM_DELETE_WINDOW",
+                            lambda: main_game.stats_open([data_base_1, data_base_2], window=display.window))
     display.display()
 
 
 def game_logs(current_game):
-    number_of_draws = 0
     if len(thread.enumerate()) <= 2:
         display.main_window.bottom.info_layer.btn["state"] = "normal"
         player_1_guess = len(data_base_1.games[f"Game {current_game}"]["guess"])
         player_2_guess = len(data_base_2.games[f"Game {current_game}"]["guess"])
         number_of_games = f"We played #{data_base_1.number_of_games} games"
         if player_1_guess == player_2_guess:
-            number_of_draws += 1
+            data_base_2.number_of_draws += 1
+            data_base_1.number_of_draws += 1
             display.main_window.bottom.info_layer.label_computer.configure(text="DRAW none win\n" + number_of_games)
         elif player_2_guess < player_1_guess:
             data_base_2.number_of_wins += 1
@@ -63,6 +65,7 @@ def game_loop(number, data_base):
         data_base.games.get(f"Game {data_base.number_of_games}")["guess"].append(game_backend.guess)
         game_backend.find_bulls_hits()
         display.main_window.top.add_info(
+            table_size=len(game_backend.number_list),
             layer=number,
             number_bulls=game_backend.number_bulls,
             number_hits=game_backend.number_hits,
@@ -88,6 +91,7 @@ def restart_windows(array):
     [frame.destroy() for i, frame in filter(lambda x: x[0] >= 2, enumerate(array))]
 
 
+#
 def start_game_loops():
     if data_base_1.number_of_games >= 1:
         restart_windows(display.main_window.top.computer_1_layer.frame.winfo_children())
