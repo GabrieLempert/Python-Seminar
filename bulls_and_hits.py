@@ -63,6 +63,7 @@ class BullsHitsDB:
         self.number_of_wins = 0
         self.games = dict()
         self.number_of_draws = 0
+        self.number_of_loses = 0
 
     def add_game(self, number, table_size):
         self.games[f"Game {self.number_of_games + 1}"] = {
@@ -74,4 +75,4 @@ class BullsHitsDB:
 
     def average_calculator(self):
         return round(reduce(lambda x, y: x + y, [len(self.games[game]["guess"]) for game in self.games]) / \
-               self.number_of_games,2)
+                     self.number_of_games, 2)

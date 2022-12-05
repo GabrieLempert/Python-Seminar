@@ -6,15 +6,19 @@ import time
 
 
 def change_window():
+    first_window.number_of_digits.curselection()
     first_window.destroy_window()
     display.window.protocol("WM_DELETE_WINDOW",
-                            lambda: main_game.stats_open([data_base_1, data_base_2], window=display.window))
+                            lambda: main_game.stats_open(
+                                [data_base_1, data_base_2],
+                                window=display.window,
+                                thread=thread.enumerate()))
     display.display()
 
 
 def game_logs(current_game):
     if len(thread.enumerate()) <= 2:
-        display.main_window.bottom.info_layer.btn["state"] = "normal"
+        display.main_window.bottom.info_layer.start_btn["state"] = "normal"
         player_1_guess = len(data_base_1.games[f"Game {current_game}"]["guess"])
         player_2_guess = len(data_base_2.games[f"Game {current_game}"]["guess"])
         number_of_games = f"We played #{data_base_1.number_of_games} games"
@@ -24,6 +28,7 @@ def game_logs(current_game):
             display.main_window.bottom.info_layer.label_computer.configure(text="DRAW none win\n" + number_of_games)
         elif player_2_guess < player_1_guess:
             data_base_2.number_of_wins += 1
+            data_base_1.number_of_loses += 1
             display. \
                 main_window. \
                 bottom.info_layer. \
@@ -32,6 +37,7 @@ def game_logs(current_game):
 
         elif player_2_guess > player_1_guess:
             data_base_1.number_of_wins += 1
+            data_base_2.number_of_loses += 1
             display. \
                 main_window. \
                 bottom. \
@@ -42,7 +48,7 @@ def game_logs(current_game):
         pass
 
 
-def game_loop(number, data_base):
+def game_loop(number, data_base, number_of_digits):
     lock = thread.Lock()
     game_backend = bh.BH()
     game_backend.create_list()
@@ -82,7 +88,7 @@ def game_loop(number, data_base):
         data_base.games.get(f"Game {data_base.number_of_games}")["table size"].append(
             len(game_backend.number_list))
         lock.release()
-        time.sleep(1.5)
+        time.sleep(0.95)
     game_logs(data_base.number_of_games)
 
 
@@ -101,7 +107,7 @@ def start_game_loops():
         t_2 = thread.Thread(target=game_loop, args=[2, data_base_2])
         t_1.start()
         t_2.start()
-        display.main_window.bottom.info_layer.btn["state"] = "disabled"
+        display.main_window.bottom.info_layer.start_btn["state"] = "disabled"
 
 
 if __name__ == "__main__":
@@ -109,6 +115,6 @@ if __name__ == "__main__":
     data_base_1 = bh.BullsHitsDB(player=1)
     data_base_2 = bh.BullsHitsDB(player=2)
     display = main_game.DisplayGame()
-    display.main_window.bottom.info_layer.btn.config(command=start_game_loops)  # Start button on Display Game
+    display.main_window.bottom.info_layer.start_btn.config(command=start_game_loops)  # Start button on Display Game
     first_window.start_btn.config(command=change_window)
     first_window.create_start()  # First window to showcase game

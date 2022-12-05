@@ -80,7 +80,8 @@ class InfoLayer:
     def __init__(self, info_layer, text, label):
         self.frame = info_layer
         self.text = text
-        self.btn = tk.Button(master=self.frame, text="Start")
+        self.start_btn = tk.Button(master=self.frame, text="Start")
+        self.quit_btn = tk.Button(master=self.frame, text="Quit")
         self.label_computer = label
 
     """ The function is building the InfoLayer grid
@@ -93,7 +94,7 @@ class InfoLayer:
         self.frame.rowconfigure(0, weight=1, minsize=100)
         self.label_computer = tk.Label(master=self.frame, text=self.text, width=40)
         self.label_computer.grid(row=0, column=0)
-        self.btn.grid(row=0, column=1, sticky="news")
+        self.start_btn.grid(row=0, column=1, sticky="news")
 
 
 class TopLayer:
@@ -224,16 +225,21 @@ class MainWindow:
         self.bottom.info_layer.info_grid()
 
 
-def stats_open(data_bases, window):
-    if data_bases[0].number_of_games != 0:
-        window.destroy()
-        stats = StatsWindow()
-        for data_base in data_bases:
-            stats.create_starts(data_base=data_base)
-        stats.window.mainloop()
-    else:
-        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+def stats_open(data_bases, window, thread):
+    if len(thread) < 2:
+
+        if data_bases[0].number_of_games != 0:
             window.destroy()
+            stats = StatsWindow()
+            stats.create_header(draws=data_bases[0].number_of_draws, games=data_bases[0].number_of_games)
+            for data_base in data_bases:
+                stats.create_starts(data_base=data_base)
+            stats.window.mainloop()
+        else:
+            if messagebox.askokcancel("Quit", "Do you want to quit?"):
+                window.destroy()
+    else:
+        pass
 
 
 class DisplayGame:
@@ -249,7 +255,7 @@ class DisplayGame:
     __init__(self)
     display(self, number_1)
     """
-
+    number_of_digits = 0
     window = tk.Tk()
     window.title("Game Screen")
 
@@ -295,7 +301,6 @@ class StatsWindow:
         # Number of wins
         # Number of draws
         # Number of games
-        pass
 
     def create_starts(self, data_base):
         tk.Label(
@@ -303,17 +308,23 @@ class StatsWindow:
             text=data_base.player,
             justify="center", font=f"BOLD {25}") \
             .pack()
-        label_list = ["Average guess", "Wins", "Draws", "Games"]
+        label_list = ["Average guess", "Wins", "Loses"]
         frame = tk.Frame(master=self.window, borderwidth="2", relief=tk.RIDGE)
-        frame.columnconfigure([0, 1, 2, 3], weight=1, minsize=100)
+        frame.columnconfigure([0, 1, 2], weight=1, minsize=100)
         frame.rowconfigure([0, 1], weight=1, minsize=40)
         frame.pack()
-        for j in range(4):
+        for j in range(3):
             label = tk.Label(master=frame, text=label_list[j], justify="center", relief=tk.RIDGE, width=10)
             label.grid(row=0, column=j)
         if data_base.number_of_games != 0:
             tk.Label(master=frame, text=data_base.average_calculator(), justify="center", width=10).grid(row=1,
                                                                                                          column=0)
             tk.Label(master=frame, text=data_base.number_of_wins, justify="center", width=10).grid(row=1, column=1)
-            tk.Label(master=frame, text=data_base.number_of_draws, justify="center", width=10).grid(row=1, column=2)
-            tk.Label(master=frame, text=data_base.number_of_games, justify="center", width=10).grid(row=1, column=3)
+            tk.Label(master=frame, text=data_base.number_of_loses, justify="center", width=10).grid(row=1, column=2)
+
+    def create_header(self, draws, games):
+        tk.Label(
+            master=self.window,
+            text=f"Number of Games: {games}\nNumber of Draws: {draws}",
+            justify="center", font=f"BOLD {20}") \
+            .pack()
