@@ -313,7 +313,6 @@ class StatsWindow:
         # Number of games
     def computer_stats(self,data_base,number_of_computers,game_number):
         computer_list = data_base.games.get(f'Game {game_number+1}').get('Computers')
-        print(computer_list)
         computers_frame = tk.Frame(master=self.frame_2,border=2,relief=tk.RIDGE)
         computers_frame.pack(fill=tk.BOTH,expand=True)
         for number in range(number_of_computers):
@@ -348,33 +347,48 @@ class StatsWindow:
 
 
 
-    def create_header(self,game_number,number_of_digits, draws, games):
+    def create_header(self,game_number,number_of_digits, draws, games,zero):
+
         header_frame = tk.Frame(master=self.frame_2, border=2, relief=tk.RIDGE,height=100,width=100)
         header_frame.pack(fill=tk.BOTH)
-        for i in range(2):
-            header_frame.rowconfigure(i,minsize=10,weight=1)
+        top=tk.Frame(master=header_frame,
+                 height=100,
+                 width=100)
+        top.pack(fill=tk.BOTH)
+        top.columnconfigure([0, 1, 2], minsize=10, weight=1)
+        bottom = tk.Frame(master=header_frame,
+                 height=100,
+                 width=100)
+        bottom.pack(fill=tk.BOTH)
+        bottom.columnconfigure([0, 1, 2,3],minsize =10, weight=1)
         tk.Label(
-            master=header_frame,relief=tk.RIDGE,border=1,
+            master=top,
+            relief=tk.RIDGE,
+            border=1,
             text=f"Game Number: {game_number}",
             justify="center", font=f"BOLD {30}") \
             .grid(row=0, column=1,sticky="news")
-        for i in range(3):
-            header_frame.columnconfigure(i, minsize=10, weight=1)
+
         tk.Label(
-            master=header_frame,relief=tk.RIDGE,border=1,
+            master=bottom,relief=tk.RIDGE,border=1,
             text=f"Number of Games: {games}",
             justify="center", font=f"BOLD {20}") \
             .grid(row=1,column=0,sticky="nsew")
         tk.Label(
-            master=header_frame,relief=tk.RIDGE,border=1,
+            master=bottom,relief=tk.RIDGE,border=1,
             text=f"Number of Draws: {draws}",
             justify="center", font=f"BOLD {20}") \
             .grid(row=1, column=1,sticky="nsew")
         tk.Label(
-            master=header_frame,relief=tk.RIDGE,border=1,
+            master=bottom,relief=tk.RIDGE,border=1,
             text=f"Number of Digits: {number_of_digits}",
             justify="center", font=f"BOLD {20}") \
             .grid(row=1, column=2,sticky="nsew")
+        tk.Label(
+            master=bottom, relief=tk.RIDGE, border=1,
+            text=f"With Zero: {zero}",
+            justify="center", font=f"BOLD {20}") \
+            .grid(row=1, column=3, sticky="nsew")
     def init_frames(self,data_base):
         self.frame_1.grid(row=0, column=0, sticky="ns")
         self.frame_2.grid(row=0, column=1, sticky="nsew")
@@ -387,15 +401,17 @@ class StatsWindow:
         self.back_btn.pack(fill=tk.BOTH,side=tk.BOTTOM)
     def callback(self,game_number,data_base):
         if len(self.frame_list)>0:
-            self.frame_list[0].grid_forget()
-            self.frame_list[0].destroy()
-            self.frame_list.pop()
-        print(len(data_base.games[f'Game {game_number+1}']['Computers']))
+            for frame in self.frame_list:
+                frame.grid_forget()
+                frame.destroy()
+            self.frame_list = []
         if data_base.games[f'Game {game_number+1}']['Games Played'] > 0 :
             self.create_header(game_number=game_number+1,
                                number_of_digits=data_base.games[f'Game {game_number+1}']['Number of Digits'],
                                draws=data_base.games[f'Game {game_number+1}']['Draws'],
-                               games=data_base.games[f'Game {game_number+1}']['Games Played'])
+                               games=data_base.games[f'Game {game_number+1}']['Games Played'],
+                               zero=data_base.games[f'Game {game_number+1}']['Zero']
+                               )
             self.computer_stats(data_base=data_base,
                                 number_of_computers=len(data_base.games[f'Game {game_number+1}']['Computers']),
                                 game_number=game_number)

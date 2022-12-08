@@ -30,7 +30,7 @@ def game_logs():
         display.main_window.bottom.info_layer.start_btn["state"] = "normal"
         display.main_window.bottom.info_layer.back_to_btn["state"] = "normal"
         display.main_window.bottom.info_layer.stats_btn["state"] = "normal"
-        number_of_games = f"We played #{data_base.number_of_games} games"
+        number_of_games = f"We played #{data_base.games[f'Game {data_base.number_of_games}']['Games Played']} games"
         text=data_base.get_winner_loser()
         display.main_window.bottom.info_layer.label_computer.configure(text=f"{text}\n" + number_of_games)
     else:
