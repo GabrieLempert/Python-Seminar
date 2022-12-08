@@ -57,22 +57,63 @@ class BH:
 
 
 class BullsHitsDB:
-    def __init__(self, player):
+    def __init__(self):
         self.number_of_games = 0
-        self.player = f"Computer {player}"
-        self.number_of_wins = 0
         self.games = dict()
         self.number_of_draws = 0
         self.number_of_loses = 0
 
-    def add_game(self, number, table_size):
-        self.games[f"Game {self.number_of_games + 1}"] = {
+    def add_game(self, number, table_size, computer_number):
+        number_games = self.games[f'Game {self.number_of_games}']['Games Played']
+        self.games[f'Game {self.number_of_games}']['Computers'][computer_number]['Games'][f'{number_games}'] = {
             "number": number,
             "guess": [],
-            "table size": [table_size]
+            "table size": [table_size],
+        }
+
+    def add_computer(self):
+        return {
+            'Games': {},
+            "Won": 0,
+            "Lost": 0
+        }
+
+    def create_game(self, number_of_digits):
+        self.games[f"Game {self.number_of_games + 1}"] = {
+            "Games Played": 0,
+            "Computers": [],
+            "Number of Digits": number_of_digits,
+            "Draws": 0
         }
         self.number_of_games += 1
 
-    def average_calculator(self):
-        return round(reduce(lambda x, y: x + y, [len(self.games[game]["guess"]) for game in self.games]) / \
-                     self.number_of_games, 2)
+    def average_calculator(self,game_number,computer_number):
+        computer=self.games[f'Game {game_number+1}']['Computers'][computer_number]
+        number_of_games=self.games[f'Game {game_number+1}']['Games Played']
+        return round(
+            reduce(lambda x, y: x + y,
+            [len(computer['Games'][f'{game}']["guess"])for game in computer['Games']]) /
+            number_of_games, 2)
+
+    def get_winner_loser(self):
+        temp_list = []
+        number_games = self.games[f'Game {self.number_of_games}']['Games Played']
+        number_computers = len(self.games[f'Game {self.number_of_games}']['Computers'])
+        for computer in self.games[f'Game {self.number_of_games}']['Computers']:
+            temp_list.append(len(computer['Games'][f'{number_games}'].get("guess")))
+        number_of_true = [i for i in map(lambda x: x <= reduce(min, temp_list), temp_list)].count(True)
+        temp_list = [i for i in enumerate([i for i in map(lambda x: x <= reduce(min, temp_list), temp_list)])]
+        print(temp_list)
+        if number_of_true == number_computers:
+            self.games[f"Game {self.number_of_games}"]["Draws"] += 1
+            return "DRAW none win"
+        else:
+            who_won = []
+            for index, winner in temp_list:
+                if  winner:
+                    self.games[f"Game {self.number_of_games}"]["Computers"][index]['Won'] += 1
+                    who_won.append(index+1)
+                else:
+                    self.games[f"Game {self.number_of_games}"]["Computers"][index]['Lost'] += 1
+            text = f"Computers {who_won} Won"
+        return text
