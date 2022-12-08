@@ -3,20 +3,24 @@ from functools import reduce
 
 
 class BH:
-    def __init__(self, number_of_digits=4):
+    def __init__(self, number_of_digits=4,zero=True):
         self.number_of_digits = number_of_digits
         self.number_list = []
         self.start_number = None
         self.guess = 0
         self.number_hits = 0
         self.number_bulls = 0
+        self.zero = zero
 
     def create_list(self):
         for x in range(10 ** (self.number_of_digits - 1), 10 ** self.number_of_digits):
             s1 = str(x)
             s2 = set(s1)
-            if len(s1) == len(s2):
-                self.number_list.append(s1)
+            if not self.zero and "0" in s1:
+                continue
+            else:
+                if len(s1) == len(s2):
+                    self.number_list.append(s1)
 
     def choose_random(self):
         self.start_number = random.choice(self.number_list)
@@ -75,15 +79,17 @@ class BullsHitsDB:
         return {
             'Games': {},
             "Won": 0,
-            "Lost": 0
+            "Lost": 0,
+
         }
 
-    def create_game(self, number_of_digits):
+    def create_game(self, number_of_digits,zero):
         self.games[f"Game {self.number_of_games + 1}"] = {
             "Games Played": 0,
             "Computers": [],
             "Number of Digits": number_of_digits,
-            "Draws": 0
+            "Draws": 0,
+            "Zero":zero ,
         }
         self.number_of_games += 1
 
@@ -103,7 +109,6 @@ class BullsHitsDB:
             temp_list.append(len(computer['Games'][f'{number_games}'].get("guess")))
         number_of_true = [i for i in map(lambda x: x <= reduce(min, temp_list), temp_list)].count(True)
         temp_list = [i for i in enumerate([i for i in map(lambda x: x <= reduce(min, temp_list), temp_list)])]
-        print(temp_list)
         if number_of_true == number_computers:
             self.games[f"Game {self.number_of_games}"]["Draws"] += 1
             return "DRAW none win"

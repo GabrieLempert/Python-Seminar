@@ -1,6 +1,7 @@
 import tkinter as tk
 
 
+
 class StartScreen:
     window = tk.Tk()
     window.geometry("400x300")
@@ -10,9 +11,13 @@ class StartScreen:
 
     def __init__(self):
         self.lbl = tk.Label(master=self.window, text="Start Game")
-        self.start_btn = tk.Button(master=self.window, text="Start Game")
+        self.start_btn_zero = tk.Button(master=self.window, text="Start Game With Zero")
+        self.start_btn_no_zero = tk.Button(master=self.window, text="Start Game Without Zero")
         self.number_of_digits = tk.Listbox(master=self.window)
         self.number_of_computers = tk.Spinbox(master=self.window, from_=2, to=4, width=5)
+
+
+
 
     def create_start(self):
         self.lbl.pack()
@@ -21,7 +26,8 @@ class StartScreen:
         tk.Label(master=self.window, text="How many computers will play?").pack()
         self.number_of_computers.pack()
         self.number_of_digits.select_set(0)
-        self.start_btn.pack()
+        self.start_btn_zero.pack()
+        self.start_btn_no_zero.pack()
         self.window.mainloop()
 
     def add_lines(self):
@@ -30,3 +36,6 @@ class StartScreen:
 
     def destroy_window(self):
         self.window.withdraw()
+
+
+

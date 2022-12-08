@@ -7,8 +7,8 @@ import time
 from bulls_and_hits import BH
 
 
-def change_window():
-    data_base.create_game(number_of_digits=first_window.number_of_digits.curselection()[0] + 4)
+def change_window(zero):
+    data_base.create_game(number_of_digits=first_window.number_of_digits.curselection()[0] + 4,zero=zero)
     if len(first_window.number_of_digits.curselection()) != 0:
         display.number_of_digits = first_window.number_of_digits.curselection()[0] + 4
     for i in range(int(first_window.number_of_computers.get())):
@@ -39,7 +39,8 @@ def game_logs():
 
 def game_loop(number, number_of_digits):
     lock = thread.Lock()
-    game_backend: BH = bh.BH(number_of_digits=number_of_digits)
+    zero = data_base.games[f"Game {data_base.number_of_games}"]['Zero']
+    game_backend: BH = bh.BH(number_of_digits=number_of_digits,zero=zero)
     game_backend.create_list()
     game_backend.choose_random()
     start_number = game_backend.start_number
@@ -102,7 +103,6 @@ def start_game_loops():
 def close_all():
     display.window.destroy()
     first_window.window.destroy()
-    stats.window.destroy()
 
 
 if __name__ == "__main__":
@@ -111,14 +111,13 @@ if __name__ == "__main__":
     display = main_game.DisplayGame()
     stats = main_game.StatsWindow
     display.main_window.bottom.info_layer.stats_btn.config(command=lambda: main_game.stats_open(
-        stats=stats(),
         data_base=data_base,
         window=display.window,
         thread=thread.enumerate()))
     display.main_window.bottom.info_layer.start_btn.config(command=start_game_loops)  # Start button on Display Game
-    first_window.start_btn.config(command=change_window)
+    first_window.start_btn_zero.config(command=lambda :change_window(zero=True))
+    first_window.start_btn_no_zero.config(command=lambda :change_window(zero=False))
     display.main_window.bottom.info_layer.back_to_btn.config(command=back_to_main)
-    stats.window.protocol("WM_DELETE_WINDOW", close_all)
     first_window.window.protocol("WM_DELETE_WINDOW", close_all)
     display.window.protocol("WM_DELETE_WINDOW", close_all)
     first_window.create_start()  # First window to showcase game

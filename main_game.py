@@ -291,10 +291,9 @@ class DisplayGame:
 
 
 class StatsWindow:
-    window = tk.Tk()
+
     def __init__(self):
-
-
+        self.window = tk.Tk()
         self.window.title("Stats")
         width = self.window.winfo_screenwidth()
         height = self.window.winfo_screenheight()
@@ -408,11 +407,11 @@ class StatsWindow:
             self.window.wm_attributes("-topmost", 1)
 
 
-def stats_open(data_base, window, thread,stats):
+def stats_open(data_base, window, thread):
     if len(thread) < 2:
         if data_base.number_of_games != 0:
             window.withdraw()
-
+            stats = StatsWindow()
             stats.init_frames(data_base)
             stats.back_btn.config(command=lambda: stats_and_game(stats_window=stats.window, game_window=window))
             stats.window.mainloop()
