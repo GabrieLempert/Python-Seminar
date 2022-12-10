@@ -3,7 +3,6 @@ import start_screen
 import bulls_and_hits as bh
 import threading as thread
 import time
-
 from bulls_and_hits import BH
 
 
@@ -20,7 +19,7 @@ def change_window(zero):
 
 
 def back_to_main():
-    display.restart_game()
+    # display.restart_game()
     display.window.withdraw()
     first_window.window.deiconify()
 
@@ -109,7 +108,6 @@ if __name__ == "__main__":
     first_window = start_screen.StartScreen()
     data_base = bh.BullsHitsDB()
     display = main_game.DisplayGame()
-    stats = main_game.StatsWindow
     display.main_window.bottom.info_layer.stats_btn.config(command=lambda: main_game.stats_open(
         data_base=data_base,
         window=display.window,
