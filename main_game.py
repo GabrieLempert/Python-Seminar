@@ -241,17 +241,19 @@ class DisplayGame:
     __init__(self)
     display(self, number_1)
     """
-    number_of_digits = 0
-    window = tk.Tk()
-    window.wm_attributes("-topmost", 1)
-    window.title("Game Screen")
 
+    number_of_digits = 0
     """ The function building DisplayGame, constructor
     :parameters: self: the function gets self as a parameter
     :returns: the function do not return any value
     """
 
     def __init__(self):
+
+        self.window = tk.Tk()
+        self.window.wm_attributes("-topmost", 1)
+        self.window.title("Game Screen")
+        self.window.withdraw()
         self.main_window = MainWindow(bottom=tk.Frame(
             master=self.window,
             height=150,
