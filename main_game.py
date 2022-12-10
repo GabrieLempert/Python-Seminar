@@ -39,7 +39,7 @@ class ComputerLayer:
     def computer_header_layer(self, size):
         tk.Label(
             master=self.frame,
-            text=f"Computer {self.computer_number}",
+            text=f"Computer {self.computer_number + 1}",
             justify="center", font=f"BOLD {size}") \
             .pack()
 
@@ -50,10 +50,11 @@ class ComputerLayer:
 
     def playing_grid(self):
         self.number_label = tk.Label(self.top_grid, text=f"The number is:PRESS START", relief=tk.RIDGE)
-        b_label = tk.Label(self.top_grid, text="B", relief=tk.RIDGE, width=10)
-        h_label = tk.Label(self.top_grid, text="H", relief=tk.RIDGE, width=10)
+        b_label = tk.Label(self.top_grid, text="B", relief=tk.RIDGE, width=5)
+        h_label = tk.Label(self.top_grid, text="H", relief=tk.RIDGE, width=5)
         self.top_grid.pack(fill=tk.BOTH)
-        self.top_grid.columnconfigure(index=[0, 1, 2], weight=1, minsize=5)
+        for i in range(3):
+            self.top_grid.columnconfigure(index=int(i), weight=1, minsize=5)
         self.number_label.grid(row=0, column=0, sticky="w")
         b_label.grid(row=0, column=1, sticky="e")
         h_label.grid(row=0, column=2, sticky="e")
@@ -81,7 +82,8 @@ class InfoLayer:
         self.frame = info_layer
         self.text = text
         self.start_btn = tk.Button(master=self.frame, text="Start")
-        self.quit_btn = tk.Button(master=self.frame, text="Quit")
+        self.stats_btn = tk.Button(master=self.frame, text="To Stats")
+        self.back_to_btn = tk.Button(master=self.frame, text="Back")
         self.label_computer = label
 
     """ The function is building the InfoLayer grid
@@ -90,11 +92,14 @@ class InfoLayer:
     """
 
     def info_grid(self):
-        self.frame.columnconfigure([0, 1], weight=1, minsize=250)
+        for i in range(4):
+            self.frame.columnconfigure(i, weight=1, minsize=150)
         self.frame.rowconfigure(0, weight=1, minsize=100)
         self.label_computer = tk.Label(master=self.frame, text=self.text, width=40)
         self.label_computer.grid(row=0, column=0)
         self.start_btn.grid(row=0, column=1, sticky="news")
+        self.stats_btn.grid(row=0, column=2, sticky="news")
+        self.back_to_btn.grid(row=0, column=3, sticky="news")
 
 
 class TopLayer:
@@ -109,10 +114,7 @@ class TopLayer:
     """
 
     def __init__(self, top_frame):
-        self.computer_2_layer = ComputerLayer(
-            tk.Frame(master=top_frame, width=200, borderwidth="2", relief=tk.RIDGE, height=200), 2)
-        self.computer_1_layer = ComputerLayer(
-            tk.Frame(master=top_frame, width=200, borderwidth="2", relief=tk.RIDGE, height=200), 1)
+        self.computer_layers = []
         self.top_frame = top_frame
 
     """ The function is adding information to the frame that show a move in the game (a guess of the player)
@@ -124,15 +126,15 @@ class TopLayer:
     :returns: the function do not return any value
     """
 
-    def add_info(self, layer, guessed_number, table_size, number_guess, number_bulls, number_hits):
-        temp_layer = 0
-        if layer == 1:
-            temp_layer = self.computer_1_layer.frame
-        if layer == 2:
-            temp_layer = self.computer_2_layer.frame
+    def create_computer_frames(self, number_of_computers):
+        self.computer_layers = [ComputerLayer(
+            tk.Frame(master=self.top_frame, borderwidth="2", relief=tk.RIDGE, height=200), i)
+            for i in
+            range(number_of_computers)]
 
+    def add_info(self, layer, guessed_number, table_size, number_guess, number_bulls, number_hits):
         new_frame = tk.Frame(
-            master=temp_layer,
+            master=self.computer_layers[layer - 1].frame,
             relief=tk.RIDGE,
             borderwidth=2,
         )
@@ -142,7 +144,8 @@ class TopLayer:
         label_bh = tk.Label(master=new_frame, text=f"{number_bulls}", width=5)
         label_bn = tk.Label(master=new_frame, text=f"{number_hits}", justify="center", width=10)
         new_frame.pack(fill=tk.BOTH)
-        new_frame.columnconfigure(index=[0, 1, 2], weight=1, minsize=5)
+        for i in range(3):
+            new_frame.columnconfigure(index=i, weight=1, minsize=5)
         label_guess.grid(row=0, column=0, sticky="w")
         label_bh.grid(row=0, column=1, sticky="e")
         label_bn.grid(row=0, column=2, sticky="e")
@@ -203,18 +206,11 @@ class MainWindow:
 
     def top_window(self):
         # Computer 1
-
-        self.top.computer_1_layer.guess_number = ""
-        self.top.computer_1_layer.frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
-        self.top.computer_2_layer.guess_number = ""
-
-        self.top.computer_2_layer.frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
-
-        self.top.computer_1_layer.computer_header_layer(25)
-        self.top.computer_1_layer.playing_grid()
-        # Computer 2
-        self.top.computer_2_layer.computer_header_layer(25)
-        self.top.computer_2_layer.playing_grid()
+        for computer_layer in self.top.computer_layers:
+            computer_layer.guess_number = ""
+            computer_layer.frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=True)
+            computer_layer.computer_header_layer(25)
+            computer_layer.playing_grid()
 
     """ The function is building the bottom window of the main window
     :parameters: self: the function gets self as a parameter
@@ -225,21 +221,11 @@ class MainWindow:
         self.bottom.info_layer.info_grid()
 
 
-def stats_open(data_bases, window, thread):
-    if len(thread) < 2:
 
-        if data_bases[0].number_of_games != 0:
-            window.destroy()
-            stats = StatsWindow()
-            stats.create_header(draws=data_bases[0].number_of_draws, games=data_bases[0].number_of_games)
-            for data_base in data_bases:
-                stats.create_starts(data_base=data_base)
-            stats.window.mainloop()
-        else:
-            if messagebox.askokcancel("Quit", "Do you want to quit?"):
-                window.destroy()
-    else:
-        pass
+
+def stats_and_game(game_window, stats_window):
+    game_window.deiconify()
+    stats_window.withdraw()
 
 
 class DisplayGame:
@@ -257,6 +243,7 @@ class DisplayGame:
     """
     number_of_digits = 0
     window = tk.Tk()
+    window.wm_attributes("-topmost", 1)
     window.title("Game Screen")
 
     """ The function building DisplayGame, constructor
@@ -283,11 +270,24 @@ class DisplayGame:
     :returns: the function do not return any value
     """
 
-    def display(self):
-        self.window.geometry("800x800")
+    def display(self, number_of_computers):
+        width = self.window.winfo_screenwidth()
+        height = self.window.winfo_screenheight()
+        self.window.geometry("%dx%d" % (width, height))
+        self.main_window.top.create_computer_frames(number_of_computers=number_of_computers)
         self.main_window.top_window()
         self.main_window.bottom_window()
         self.window.mainloop()
+
+    def restart_game(self):
+        self.main_window.top.top_frame.destroy()
+        self.main_window.top = TopLayer(top_frame=tk.Frame(
+            master=self.window,
+            height=100,
+            border=1))
+        self.main_window.top.top_frame.pack(fill=tk.BOTH, expand=True, side=tk.TOP)
+        self.main_window.bottom.bottom_frame.pack(side=tk.BOTTOM)
+        self.main_window.bottom.info_layer.label_computer.config(text="")
 
 
 class StatsWindow:
@@ -295,36 +295,141 @@ class StatsWindow:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title("Stats")
-        self.window.geometry("400x400")
+        width = self.window.winfo_screenwidth()
+        height = self.window.winfo_screenheight()
+        self.window.geometry("%dx%d" % (width-100, height-100))
+        self.window.wm_attributes("-topmost", 1)
+        self.window.rowconfigure(0, minsize=800, weight=1)
+        self.window.columnconfigure(1, minsize=800, weight=1)
+        self.frame_1 = tk.Frame(master=self.window, border=2, relief=tk.RIDGE, width=100)
+        self.frame_2 = tk.Frame(master=self.window, border=2, relief=tk.RIDGE, width=100)
+        self.back_btn = tk.Button(master=self.frame_1, text="Back to Game",width=10,height=10)
+        self.menu = tk.Listbox(master=self.frame_1,height=38)
+        self.frame_list = []
 
         # Average of guess pre game
         # Number of wins
         # Number of draws
         # Number of games
+    def computer_stats(self,data_base,number_of_computers,game_number):
+        computer_list = data_base.games.get(f'Game {game_number+1}').get('Computers')
+        computers_frame = tk.Frame(master=self.frame_2,border=2,relief=tk.RIDGE)
+        computers_frame.pack(fill=tk.BOTH,expand=True)
+        for number in range(number_of_computers):
+            computers_frame.columnconfigure(number,minsize=10,weight=1)
+        for rows in range(4):
+            computers_frame.rowconfigure(rows,minsize=10,weight=1)
+            for computer in range(number_of_computers):
+                tk.Label(
+                    master=computers_frame, relief=tk.RIDGE, border=1,
+                    text=f"Computer Name: {computer+1}",
+                    justify="center", font=f"BOLD {30}") \
+                    .grid(row=0, column=computer, sticky="new")
+                tk.Label(
+                    master=computers_frame, relief=tk.RIDGE, border=1,
+                    text=f"Computer Won: {computer_list[computer]['Won']}",
+                    anchor="w",
+                    font=f"BOLD {30}") \
+                    .grid(row=1, column=computer, sticky="new")
+                tk.Label(
+                    master=computers_frame, relief=tk.RIDGE, border=1,
+                    text=f"Computer Lost: {computer_list[computer]['Lost']}",
+                    anchor="w",
+                    font=f"BOLD {30}") \
+                    .grid(row=2, column=computer, sticky="new")
+                tk.Label(
+                    master=computers_frame, relief=tk.RIDGE, border=1,
+                    anchor="w",
+                    text=f"Average guess:  {data_base.average_calculator(game_number=game_number,computer_number=computer)}"
+                    , font=f"BOLD {30}") \
+                    .grid(row=3, column=computer, sticky="new")
+      #computer name, guess average, wins, loses
 
-    def create_starts(self, data_base):
-        tk.Label(
-            master=self.window,
-            text=data_base.player,
-            justify="center", font=f"BOLD {25}") \
-            .pack()
-        label_list = ["Average guess", "Wins", "Loses"]
-        frame = tk.Frame(master=self.window, borderwidth="2", relief=tk.RIDGE)
-        frame.columnconfigure([0, 1, 2], weight=1, minsize=100)
-        frame.rowconfigure([0, 1], weight=1, minsize=40)
-        frame.pack()
-        for j in range(3):
-            label = tk.Label(master=frame, text=label_list[j], justify="center", relief=tk.RIDGE, width=10)
-            label.grid(row=0, column=j)
-        if data_base.number_of_games != 0:
-            tk.Label(master=frame, text=data_base.average_calculator(), justify="center", width=10).grid(row=1,
-                                                                                                         column=0)
-            tk.Label(master=frame, text=data_base.number_of_wins, justify="center", width=10).grid(row=1, column=1)
-            tk.Label(master=frame, text=data_base.number_of_loses, justify="center", width=10).grid(row=1, column=2)
 
-    def create_header(self, draws, games):
+
+    def create_header(self,game_number,number_of_digits, draws, games,zero):
+
+        header_frame = tk.Frame(master=self.frame_2, border=2, relief=tk.RIDGE,height=100,width=100)
+        header_frame.pack(fill=tk.BOTH)
+        top=tk.Frame(master=header_frame,
+                 height=100,
+                 width=100)
+        top.pack(fill=tk.BOTH)
+        top.columnconfigure([0, 1, 2], minsize=10, weight=1)
+        bottom = tk.Frame(master=header_frame,
+                 height=100,
+                 width=100)
+        bottom.pack(fill=tk.BOTH)
+        bottom.columnconfigure([0, 1, 2,3],minsize =10, weight=1)
         tk.Label(
-            master=self.window,
-            text=f"Number of Games: {games}\nNumber of Draws: {draws}",
+            master=top,
+            relief=tk.RIDGE,
+            border=1,
+            text=f"Game Number: {game_number}",
+            justify="center", font=f"BOLD {30}") \
+            .grid(row=0, column=1,sticky="news")
+
+        tk.Label(
+            master=bottom,relief=tk.RIDGE,border=1,
+            text=f"Number of Games: {games}",
             justify="center", font=f"BOLD {20}") \
-            .pack()
+            .grid(row=1,column=0,sticky="nsew")
+        tk.Label(
+            master=bottom,relief=tk.RIDGE,border=1,
+            text=f"Number of Draws: {draws}",
+            justify="center", font=f"BOLD {20}") \
+            .grid(row=1, column=1,sticky="nsew")
+        tk.Label(
+            master=bottom,relief=tk.RIDGE,border=1,
+            text=f"Number of Digits: {number_of_digits}",
+            justify="center", font=f"BOLD {20}") \
+            .grid(row=1, column=2,sticky="nsew")
+        tk.Label(
+            master=bottom, relief=tk.RIDGE, border=1,
+            text=f"With Zero: {zero}",
+            justify="center", font=f"BOLD {20}") \
+            .grid(row=1, column=3, sticky="nsew")
+    def init_frames(self,data_base):
+        self.frame_1.grid(row=0, column=0, sticky="ns")
+        self.frame_2.grid(row=0, column=1, sticky="nsew")
+        for i in range(2):
+            self.frame_2.rowconfigure(i, weight=1, minsize=2)
+        for game in range(data_base.number_of_games):
+            tk.Button(master=self.frame_1, text=f"Game {game+1}",width=1,height=1,
+                      command=lambda :self.callback(game_number=game,data_base=data_base))\
+                .pack(fill=tk.BOTH)
+        self.back_btn.pack(fill=tk.BOTH,side=tk.BOTTOM)
+    def callback(self,game_number,data_base):
+        if len(self.frame_list)>0:
+            for frame in self.frame_list:
+                frame.grid_forget()
+                frame.destroy()
+            self.frame_list = []
+        if data_base.games[f'Game {game_number+1}']['Games Played'] > 0 :
+            self.create_header(game_number=game_number+1,
+                               number_of_digits=data_base.games[f'Game {game_number+1}']['Number of Digits'],
+                               draws=data_base.games[f'Game {game_number+1}']['Draws'],
+                               games=data_base.games[f'Game {game_number+1}']['Games Played'],
+                               zero=data_base.games[f'Game {game_number+1}']['Zero']
+                               )
+            self.computer_stats(data_base=data_base,
+                                number_of_computers=len(data_base.games[f'Game {game_number+1}']['Computers']),
+                                game_number=game_number)
+            for key in self.frame_2.children:
+                self.frame_list.append(self.frame_2.children[key])
+        else:
+            self.window.wm_attributes("-topmost", 0)
+            messagebox.showerror("showerror", "Error")
+            self.window.wm_attributes("-topmost", 1)
+
+
+def stats_open(data_base, window, thread):
+    if len(thread) < 2:
+        if data_base.number_of_games != 0:
+            window.withdraw()
+            stats = StatsWindow()
+            stats.init_frames(data_base)
+            stats.back_btn.config(command=lambda: stats_and_game(stats_window=stats.window, game_window=window))
+            stats.window.mainloop()
+    else:
+        pass
