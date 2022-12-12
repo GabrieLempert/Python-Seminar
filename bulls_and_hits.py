@@ -94,8 +94,8 @@ class BullsHitsDB:
         self.number_of_games += 1
 
     def average_calculator(self,game_number,computer_number):
-        computer=self.games[f'Game {game_number+1}']['Computers'][computer_number]
-        number_of_games=self.games[f'Game {game_number+1}']['Games Played']
+        computer=self.games[f'Game {game_number}']['Computers'][computer_number]
+        number_of_games=self.games[f'Game {game_number}']['Games Played']
         return round(
             reduce(lambda x, y: x + y,
             [len(computer['Games'][f'{game}']["guess"])for game in computer['Games']]) /

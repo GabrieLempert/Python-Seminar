@@ -28,7 +28,7 @@ def back_to_main():
                         :parameters: non
                         :returns: the function do not return any value
     """
-    # display.restart_game()
+    display.restart_game()
     display.window.withdraw()
     first_window.window.deiconify()
 
@@ -127,6 +127,21 @@ def start_game_loops():
         display.main_window.bottom.info_layer.back_to_btn["state"] = "disabled"
         display.main_window.bottom.info_layer.stats_btn["state"] = "disabled"
 
+def stats_open():
+    """ The function is opening the statistics window and hiding the ather windows
+                        :parameters: self: the function gets self as a parameter
+                        data_base: where we store all the data for the statistics
+                        :returns: the function do not return any value
+    """
+    if len(thread.enumerate()) < 2:
+        if data_base.number_of_games != 0:
+            display.window.withdraw()
+            stats.window.deiconify()
+            stats.create_button(number_of_game=data_base.number_of_games,data_base=data_base)
+            stats.init_frames()
+            stats.window.mainloop()
+    else:
+        pass
 
 def close_all():
     """ The function is closing all the windows, end of game
@@ -141,10 +156,9 @@ if __name__ == "__main__":
     first_window = start_screen.StartScreen()
     data_base = bh.BullsHitsDB()
     display = main_game.DisplayGame()
-    display.main_window.bottom.info_layer.stats_btn.config(command=lambda: main_game.stats_open(
-        data_base=data_base,
-        window=display.window,
-        thread=thread.enumerate()))
+    display.main_window.bottom.info_layer.stats_btn.config(command=stats_open)
+    stats = main_game.StatsWindow()
+    stats.back_btn.config(command=lambda: main_game.stats_and_game(stats_window=stats.window, game_window=display.window))
     display.main_window.bottom.info_layer.start_btn.config(command=start_game_loops)  # Start button on Display Game
     first_window.start_btn_zero.config(command=lambda: change_window(zero=True))
     first_window.start_btn_no_zero.config(command=lambda: change_window(zero=False))

@@ -321,14 +321,15 @@ class StatsWindow:
         self.window.title("Stats")
         width = self.window.winfo_screenwidth()
         height = self.window.winfo_screenheight()
-        self.window.geometry("%dx%d" % (width-100, height-100))
+        self.window.geometry("%dx%d" % (width - 100, height - 100))
         self.window.wm_attributes("-topmost", 1)
         self.window.rowconfigure(0, minsize=800, weight=1)
         self.window.columnconfigure(1, minsize=800, weight=1)
+        self.window.withdraw()
+        self.button_list = []
         self.frame_1 = tk.Frame(master=self.window, border=2, relief=tk.RIDGE, width=100)
         self.frame_2 = tk.Frame(master=self.window, border=2, relief=tk.RIDGE, width=100)
         self.back_btn = tk.Button(master=self.frame_1, text="Back to Game",width=10,height=10)
-        self.menu = tk.Listbox(master=self.frame_1,height=38)
         self.frame_list = []
 
     def computer_stats(self, data_base, number_of_computers, game_number):
@@ -339,7 +340,7 @@ class StatsWindow:
             game_number: the number of the latest game
             :returns: the function do not return any value
         """
-        computer_list = data_base.games.get(f'Game {game_number+1}').get('Computers')
+        computer_list = data_base.games.get(f'Game {game_number}').get('Computers')
         computers_frame = tk.Frame(master=self.frame_2,border=2,relief=tk.RIDGE)
         computers_frame.pack(fill=tk.BOTH,expand=True)
         for number in range(number_of_computers):
@@ -421,7 +422,8 @@ class StatsWindow:
             justify="center", font=f"BOLD {20}") \
             .grid(row=1, column=3, sticky="nsew")
 
-    def init_frames(self, data_base):
+
+    def init_frames(self):
         """ The function is initializing the frames
             :parameters: self: the function gets self as a parameter
             data_base: where we store all the data for the statistics
@@ -431,11 +433,11 @@ class StatsWindow:
         self.frame_2.grid(row=0, column=1, sticky="nsew")
         for i in range(2):
             self.frame_2.rowconfigure(i, weight=1, minsize=2)
-        for game in range(data_base.number_of_games):
-            tk.Button(master=self.frame_1, text=f"Game {game+1}", width=1, height=1,
-                      command=lambda: self.callback(game_number=game, data_base=data_base))\
-                .pack(fill=tk.BOTH)
+        print(self.button_list)
+        for number,button in self.button_list:
+                button.pack(fill=tk.BOTH)
         self.back_btn.pack(fill=tk.BOTH, side=tk.BOTTOM)
+
 
     def callback(self, game_number, data_base):
         """ The function is initializing the statistics, gets a calls when we press on callback button
@@ -448,15 +450,15 @@ class StatsWindow:
                 frame.grid_forget()
                 frame.destroy()
             self.frame_list = []
-        if data_base.games[f'Game {game_number+1}']['Games Played'] > 0 :
-            self.create_header(game_number=game_number+1,
-                               number_of_digits=data_base.games[f'Game {game_number+1}']['Number of Digits'],
-                               draws=data_base.games[f'Game {game_number+1}']['Draws'],
-                               games=data_base.games[f'Game {game_number+1}']['Games Played'],
-                               zero=data_base.games[f'Game {game_number+1}']['Zero']
+        if data_base.games[f'Game {game_number}']['Games Played'] > 0 :
+            self.create_header(game_number=game_number,
+                               number_of_digits=data_base.games[f'Game {game_number}']['Number of Digits'],
+                               draws=data_base.games[f'Game {game_number}']['Draws'],
+                               games=data_base.games[f'Game {game_number}']['Games Played'],
+                               zero=data_base.games[f'Game {game_number}']['Zero']
                                )
             self.computer_stats(data_base=data_base,
-                                number_of_computers=len(data_base.games[f'Game {game_number+1}']['Computers']),
+                                number_of_computers=len(data_base.games[f'Game {game_number}']['Computers']),
                                 game_number=game_number)
             for key in self.frame_2.children:
                 self.frame_list.append(self.frame_2.children[key])
@@ -464,20 +466,17 @@ class StatsWindow:
             self.window.wm_attributes("-topmost", 0)
             messagebox.showerror("showerror", "Error")
             self.window.wm_attributes("-topmost", 1)
+    def create_button(self,number_of_game,data_base):
+        if len(self.button_list) < number_of_game:
+            self.button_list.append((number_of_game,tk.Button(master=self.frame_1, text=f"Game {number_of_game}", width=1, height=1,
+                         command=lambda: self.callback(game_number=number_of_game, data_base=data_base))))
+        if self.button_list[number_of_game-1][0] != number_of_game:
+            self.button_list.append(
+                (number_of_game, tk.Button(master=self.frame_1, text=f"Game {number_of_game}", width=1, height=1,
+                                           command=lambda: self.callback(game_number=number_of_game,
+                                                                         data_base=data_base))))
 
 
-def stats_open(data_base, window, thread):
-    """ The function is opening the statistics window and hiding the ather windows
-                        :parameters: self: the function gets self as a parameter
-                        data_base: where we store all the data for the statistics
-                        :returns: the function do not return any value
-    """
-    if len(thread) < 2:
-        if data_base.number_of_games != 0:
-            window.withdraw()
-            stats = StatsWindow()
-            stats.init_frames(data_base)
-            stats.back_btn.config(command=lambda: stats_and_game(stats_window=stats.window, game_window=window))
-            stats.window.mainloop()
-    else:
-        pass
+
+
+
