@@ -322,17 +322,13 @@ class StatsWindow:
         self.menu = tk.Listbox(master=self.frame_1,height=38)
         self.frame_list = []
 
-        # Average of guess pre game
-        # Number of wins
-        # Number of draws
-        # Number of games
     def computer_stats(self, data_base, number_of_computers, game_number):
-        """ The function is building StatsWindow, constructor
-                            :parameters: self: the function gets self as a parameter
-                            data_base:
-                            number_of_computers:
-                            game_number:
-                            :returns: the function do not return any value
+        """ The function is updating the statistics of the latest game for each computer
+            :parameters: self: the function gets self as a parameter
+            data_base: where we store all the data for the statistics
+            number_of_computers: number of players on the latest game
+            game_number: the number of the latest game
+            :returns: the function do not return any value
         """
         computer_list = data_base.games.get(f'Game {game_number+1}').get('Computers')
         computers_frame = tk.Frame(master=self.frame_2,border=2,relief=tk.RIDGE)
@@ -365,9 +361,15 @@ class StatsWindow:
                     text=f"Average guess:  {data_base.average_calculator(game_number=game_number,computer_number=computer)}"
                     , font=f"BOLD {30}") \
                     .grid(row=3, column=computer, sticky="new")
-      #computer name, guess average, wins, loses
 
-    def create_header(self,game_number,number_of_digits, draws, games,zero):
+    def create_header(self, game_number, number_of_digits, draws, games, zero):
+        """ The function is updating the statistics of the latest game for each computer
+            :parameters: self: the function gets self as a parameter
+            data_base: where we store all the data for the statistics
+            number_of_computers: number of players on the latest game
+            game_number: the number of the latest game
+            :returns: the function do not return any value
+        """
 
         header_frame = tk.Frame(master=self.frame_2, border=2, relief=tk.RIDGE,height=100,width=100)
         header_frame.pack(fill=tk.BOTH)
@@ -411,6 +413,11 @@ class StatsWindow:
             .grid(row=1, column=3, sticky="nsew")
 
     def init_frames(self,data_base):
+        """ The function is initializing the frames
+            :parameters: self: the function gets self as a parameter
+            data_base: where we store all the data for the statistics
+            :returns: the function do not return any value
+        """
         self.frame_1.grid(row=0, column=0, sticky="ns")
         self.frame_2.grid(row=0, column=1, sticky="nsew")
         for i in range(2):
@@ -422,6 +429,11 @@ class StatsWindow:
         self.back_btn.pack(fill=tk.BOTH,side=tk.BOTTOM)
 
     def callback(self,game_number,data_base):
+        """ The function is initializing the statistics, gets a calls when we press on callback button
+                    :parameters: self: the function gets self as a parameter
+                    data_base: where we store all the data for the statistics
+                    :returns: the function do not return any value
+        """
         if len(self.frame_list)>0:
             for frame in self.frame_list:
                 frame.grid_forget()
@@ -446,6 +458,11 @@ class StatsWindow:
 
 
 def stats_open(data_base, window, thread):
+    """ The function is opening the statistics window and hiding the ather windows
+                        :parameters: self: the function gets self as a parameter
+                        data_base: where we store all the data for the statistics
+                        :returns: the function do not return any value
+    """
     if len(thread) < 2:
         if data_base.number_of_games != 0:
             window.withdraw()
