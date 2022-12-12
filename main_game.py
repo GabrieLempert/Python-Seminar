@@ -278,6 +278,10 @@ class DisplayGame:
         self.window.mainloop()
 
     def restart_game(self):
+        """ The function is restarting the game display
+                :parameters: self: the function gets self as a parameter
+                :returns: the function do not return any value
+        """
         self.main_window.top.top_frame.destroy()
         self.main_window.top = TopLayer(top_frame=tk.Frame(
             master=self.window,
@@ -412,7 +416,7 @@ class StatsWindow:
             justify="center", font=f"BOLD {20}") \
             .grid(row=1, column=3, sticky="nsew")
 
-    def init_frames(self,data_base):
+    def init_frames(self, data_base):
         """ The function is initializing the frames
             :parameters: self: the function gets self as a parameter
             data_base: where we store all the data for the statistics
@@ -423,12 +427,12 @@ class StatsWindow:
         for i in range(2):
             self.frame_2.rowconfigure(i, weight=1, minsize=2)
         for game in range(data_base.number_of_games):
-            tk.Button(master=self.frame_1, text=f"Game {game+1}",width=1,height=1,
-                      command=lambda :self.callback(game_number=game,data_base=data_base))\
+            tk.Button(master=self.frame_1, text=f"Game {game+1}", width=1, height=1,
+                      command=lambda: self.callback(game_number=game, data_base=data_base))\
                 .pack(fill=tk.BOTH)
-        self.back_btn.pack(fill=tk.BOTH,side=tk.BOTTOM)
+        self.back_btn.pack(fill=tk.BOTH, side=tk.BOTTOM)
 
-    def callback(self,game_number,data_base):
+    def callback(self, game_number, data_base):
         """ The function is initializing the statistics, gets a calls when we press on callback button
                     :parameters: self: the function gets self as a parameter
                     data_base: where we store all the data for the statistics
