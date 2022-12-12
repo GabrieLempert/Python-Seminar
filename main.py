@@ -7,6 +7,11 @@ from bulls_and_hits import BH
 
 
 def change_window(zero):
+    """ The function is initializing the main window of the game
+                        :parameters: zero: if the random number is with or without zero
+                        :returns: the function do not return any value
+    """
+
     data_base.create_game(number_of_digits=first_window.number_of_digits.curselection()[0] + 4,zero=zero)
     if len(first_window.number_of_digits.curselection()) != 0:
         display.number_of_digits = first_window.number_of_digits.curselection()[0] + 4
@@ -19,12 +24,21 @@ def change_window(zero):
 
 
 def back_to_main():
+    """ The function is going back to the first window -display the main menu and hides the game window from the screen
+                        :parameters: non
+                        :returns: the function do not return any value
+    """
     # display.restart_game()
     display.window.withdraw()
     first_window.window.deiconify()
 
 
 def game_logs():
+    """ The function is changing the main window in a case 1 player won.
+    (enables start, back and stats button and writing who won)
+                            :parameters: non
+                            :returns: the function do not return any value
+    """
     if len(thread.enumerate()) <= 2:
         display.main_window.bottom.info_layer.start_btn["state"] = "normal"
         display.main_window.bottom.info_layer.back_to_btn["state"] = "normal"
@@ -37,9 +51,14 @@ def game_logs():
 
 
 def game_loop(number, number_of_digits):
+    """ The function is starting the game, the threads are running this function in parallel
+                    :parameters: number: the number of the computer (player)
+                    :number_of_digits: digits number of the random number
+                    :returns: the function do not return any value
+    """
     lock = thread.Lock()
     zero = data_base.games[f"Game {data_base.number_of_games}"]['Zero']
-    game_backend: BH = bh.BH(number_of_digits=number_of_digits,zero=zero)
+    game_backend: BH = bh.BH(number_of_digits=number_of_digits, zero=zero)
     game_backend.create_list()
     game_backend.choose_random()
     start_number = game_backend.start_number
@@ -81,13 +100,22 @@ def game_loop(number, number_of_digits):
     game_logs()
 
 
-# Restarts the window for new game
 def restart_windows(array):
+    """ The function is restarting the window for a new game
+                    :parameters: non
+                    :returns: the function do not return any value
+    """
     [frame.destroy() for i, frame in filter(lambda x: x[0] >= 2, enumerate(array))]
 
 
 #
 def start_game_loops():
+    """ The function is initializing the game, when the user press start on the first window.
+        initials the user choices - number of computers(players), number of digits, with or without zero.
+        initials the threads- one thread for each computer
+                :parameters: non
+                :returns: the function do not return any value
+    """
     data_base.games[f"Game {data_base.number_of_games}"]['Games Played'] += 1
     if data_base.number_of_games >= 1:
         for layer in display.main_window.top.computer_layers:
@@ -99,7 +127,12 @@ def start_game_loops():
         display.main_window.bottom.info_layer.back_to_btn["state"] = "disabled"
         display.main_window.bottom.info_layer.stats_btn["state"] = "disabled"
 
+
 def close_all():
+    """ The function is closing all the windows, end of game
+            :parameters: non
+            :returns: the function do not return any value
+    """
     display.window.destroy()
     first_window.window.destroy()
 
@@ -113,8 +146,8 @@ if __name__ == "__main__":
         window=display.window,
         thread=thread.enumerate()))
     display.main_window.bottom.info_layer.start_btn.config(command=start_game_loops)  # Start button on Display Game
-    first_window.start_btn_zero.config(command=lambda :change_window(zero=True))
-    first_window.start_btn_no_zero.config(command=lambda :change_window(zero=False))
+    first_window.start_btn_zero.config(command=lambda: change_window(zero=True))
+    first_window.start_btn_no_zero.config(command=lambda: change_window(zero=False))
     display.main_window.bottom.info_layer.back_to_btn.config(command=back_to_main)
     first_window.window.protocol("WM_DELETE_WINDOW", close_all)
     display.window.protocol("WM_DELETE_WINDOW", close_all)
