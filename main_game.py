@@ -197,7 +197,7 @@ class MainWindow:
 
     def top_window(self):
         """ The function is building the top window where computer 1 and computer 2 game is displaying,
-             where the game is represent, all the players moves
+             where the game is represented, all the players moves
             :parameters: self: the function gets self as a parameter
             number_1: the random number (4 digits) you need to guess for the game
             :returns: the function do not return any value
@@ -276,7 +276,7 @@ class DisplayGame:
 
         width = self.window.winfo_screenwidth()
         height = self.window.winfo_screenheight()
-        self.window.geometry("%dx%d" % (width, height))
+        self.window.geometry("%dx%d" % (width-100, height-100))
         self.main_window.top.create_computer_frames(number_of_computers=number_of_computers)
         self.main_window.top_window()
         self.main_window.bottom_window()
