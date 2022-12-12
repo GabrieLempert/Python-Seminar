@@ -220,6 +220,11 @@ class MainWindow:
 
 
 def stats_and_game(game_window, stats_window):
+    """ The function is hiding the statistics window and opening the game window
+                :parameters: game_window: main game window
+                stats_window: statistics window
+                :returns: the function do not return any value
+    """
     game_window.deiconify()
     stats_window.withdraw()
 
