@@ -433,7 +433,6 @@ class StatsWindow:
         self.frame_2.grid(row=0, column=1, sticky="nsew")
         for i in range(2):
             self.frame_2.rowconfigure(i, weight=1, minsize=2)
-        print(self.button_list)
         for number,button in self.button_list:
                 button.pack(fill=tk.BOTH)
         self.back_btn.pack(fill=tk.BOTH, side=tk.BOTTOM)
