@@ -148,8 +148,11 @@ def close_all():
             :parameters: non
             :returns: the function do not return any value
     """
-    display.window.destroy()
-    first_window.window.destroy()
+    if len(thread.enumerate()) < 2:
+        display.window.destroy()
+        first_window.window.destroy()
+        stats.window.destroy()
+
 
 
 if __name__ == "__main__":
@@ -165,4 +168,5 @@ if __name__ == "__main__":
     display.main_window.bottom.info_layer.back_to_btn.config(command=back_to_main)
     first_window.window.protocol("WM_DELETE_WINDOW", close_all)
     display.window.protocol("WM_DELETE_WINDOW", close_all)
+    stats.window.protocol("WM_DELETE_WINDOW", close_all)
     first_window.create_start()  # First window to showcase game
