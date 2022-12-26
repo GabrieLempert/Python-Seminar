@@ -20,6 +20,7 @@ def change_window(zero):
     number = int(first_window.number_of_computers.get())
     first_window.destroy_window()
     display.window.deiconify()
+    stats.create_button(number_of_game=data_base.number_of_games, data_base=data_base)
     display.display(number_of_computers=number)
 
 
@@ -137,7 +138,6 @@ def stats_open():
         if data_base.number_of_games != 0:
             display.window.withdraw()
             stats.window.deiconify()
-            stats.create_button(number_of_game=data_base.number_of_games,data_base=data_base)
             stats.init_frames()
             stats.window.mainloop()
     else:

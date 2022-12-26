@@ -387,12 +387,14 @@ class StatsWindow:
                  height=100,
                  width=100)
         top.pack(fill=tk.BOTH)
-        top.columnconfigure([0, 1, 2], minsize=10, weight=1)
+        for number in range(3):
+            top.columnconfigure(number, minsize=10, weight=1)
         bottom = tk.Frame(master=header_frame,
                  height=100,
                  width=100)
         bottom.pack(fill=tk.BOTH)
-        bottom.columnconfigure([0, 1, 2,3],minsize =10, weight=1)
+        for number in range(4):
+            bottom.columnconfigure(number,minsize =10, weight=1)
         tk.Label(
             master=top,
             relief=tk.RIDGE,
