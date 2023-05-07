@@ -5,7 +5,6 @@ import threading as thread
 import time
 from bulls_and_hits import BH
 
-
 def change_window(zero):
     """ The function is initializing the main window of the game
                         :parameters: zero: if the random number is with or without zero
@@ -155,7 +154,11 @@ def close_all():
 
 
 
+
+
 if __name__ == "__main__":
+
+
     first_window = start_screen.StartScreen()
     data_base = bh.BullsHitsDB()
     display = main_game.DisplayGame()

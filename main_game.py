@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 
+
 class ComputerLayer:
     """
     A class use to build the frames and the labels of the computer
@@ -184,7 +185,7 @@ class MainWindow:
 
     def __init__(self, top, bottom):
         """ The function is building MainWindow, constructor
-            :parameters: self: the function gets self as a parameter
+            # :parameters: self: the function gets self as a parameter
             top: the top frame
             bottom: the bottom frame
             :returns: the function do not return any value
